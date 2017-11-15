@@ -61,7 +61,7 @@ class Flasher
 
   void turnOff()
   {
-    digitalWrite(ledPin, 0);
+    digitalWrite(ledPin, LOW);
   }
   
   void Update()
