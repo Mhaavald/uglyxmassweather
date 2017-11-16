@@ -276,14 +276,6 @@ class SoftPWM
 };
  
 Fader eyes(eyesPin, 5, 30);
-//Fader mouth(mouthPin, 5, 30);
-//Fader leftCap(leftCapPin, 5, 30);
-
-//Fader rightCap(rightCapPin, 5, 30);
-//Fader topCap(topCapPin, 5, 30);
-
-
-//Flasher eyes(eyesPin, 1000, 500);
 Flasher mouth(mouthPin, 1000, 1000);
 Flasher leftCap(leftCapPin, 30, 1000);
 Flasher rightCap(rightCapPin, 30, 2000);
@@ -292,9 +284,6 @@ Flasher topCap(topCapPin, 30, 500);
 byte pins[8] = {2,3,5,6,9,10,11,12};
 
 SoftPWM softPwm(pins);
-
-//Fader rightCap(rightCapPin, 5, 500);
-//Fader topCap(topCapPin, 5, 500);
 
 void setup() 
 { 
