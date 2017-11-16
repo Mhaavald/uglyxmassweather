@@ -19,6 +19,9 @@
   
 */
 
+#define ON true
+#define OFF false
+  
 // Two leds in parallell
 int eyesPin = 5;
 
@@ -126,14 +129,172 @@ class Fader
   }  
 };
 
-// Eyes will fade on off
-// The others will blink/flash
+class SoftPWM
+{
+  // variables for pattern timing
+  unsigned long currentMillis = millis();
+  unsigned long previousMillis = 0;
+  unsigned long millisInterval = 100;
+   
+  // variables for software PWM
+  unsigned long currentMicros = micros();
+  unsigned long previousMicros = 0;
+  // this is the frequency of the sw PWM
+  // frequency = 1/(2 * microInterval)
+  unsigned long microInterval = 250;
+   
+  byte pwmMax = 100;
+   
+  // fading (for the timing)
+  int fadeIncrement = 1;
+
+  int pinCount = 8;
+  //byte pins[pinCount] = {2,3,5,6,9,10,11,12};
+  // typedef for properties of each sw pwm pin
+    
+  typedef struct pwmPins {
+    int pin;
+    int pwmValue;
+    bool pinState;
+    int pwmTickCount;
+  } pwmPin;
+  
+  pwmPin *myPWMpins;
+
+   
+  // create the sw pwm pins
+  // these can be any I/O pin
+  // that can be set to output!
+
+  byte *pins;
+  
+  //byte pins[pinCount] = {2,3,5,6,9,10,11,12};
+  
+  public:
+  SoftPWM(byte *_pins)
+  {
+    pinCount = sizeof(_pins);
+    pins = _pins;
+    pwmPin newStruct[pinCount];
+  
+    myPWMpins = newStruct;
+   
+    setupPWMpins();
+    pinMode(13, OUTPUT);
+  }
+  
+  // function to "setup" the sw pwm pin states
+  // modify to suit your needs
+  // this creates an alternating fade pattern
+  void setupPWMpins() {
+    for (int index=0; index < pinCount; index++) {
+      myPWMpins[index].pin = pins[index];
+   
+      // mix it up a little bit
+      // changes the starting pwmValue for odd and even
+      if (index % 2)
+        myPWMpins[index].pwmValue = 25;
+      else
+        myPWMpins[index].pwmValue = 75;
+   
+      myPWMpins[index].pinState = ON;
+      myPWMpins[index].pwmTickCount = 0;
+   
+      // unlike analogWrite(), this is necessary
+      
+      pinMode(pins[index], OUTPUT);
+    }
+  }
+   
+  void pwmFadePattern() {
+    // go through each sw pwm pin, and increase
+    // the pwm value. this would be like
+    // calling analogWrite() on each hw pwm pin
+    for (int index=0; index < pinCount; index++) {
+      myPWMpins[index].pwmValue += fadeIncrement;
+      if (myPWMpins[index].pwmValue > 100)
+        myPWMpins[index].pwmValue = 0;
+    }
+  }
+   
+  void handlePWM() {
+    currentMicros = micros();
+    // check to see if we need to increment our PWM counters yet
+      if (currentMicros - previousMicros >= microInterval) {
+      // Increment each pin's counter
+      for (int index=0; index < pinCount; index++) {
+      // each pin has its own tickCounter
+        myPWMpins[index].pwmTickCount++;
+   
+      // determine if we're counting on or off time
+        if (myPWMpins[index].pinState == ON) {
+          // see if we hit the desired on percentage
+          // not as precise as 255 or 1024, but easier to do math
+          if (myPWMpins[index].pwmTickCount >= myPWMpins[index].pwmValue) {
+            myPWMpins[index].pinState = OFF;
+          }
+        } else {
+          // if it isn't on, it is off
+          if (myPWMpins[index].pwmTickCount >= pwmMax) {
+            myPWMpins[index].pinState = ON;
+            myPWMpins[index].pwmTickCount = 0;
+          }
+        }
+        // could probably use some bitwise optimization here, digitalWrite()
+        // really slows things down after 10 pins.
+        digitalWrite(myPWMpins[index].pin, myPWMpins[index].pinState);
+      }
+      // reset the micros() tick counter.
+      digitalWrite(13, !digitalRead(13));
+      previousMicros = currentMicros;
+    }
+  }
  
-Fader   eyes(eyesPin, 5, 30);
+  void Update() {
+    // this is the magic for sw pwm
+    // need to call this anytime you
+    // have a long operation
+    handlePWM();
+   
+    // check timer for fading pattern
+    // this would be the same 
+    // if we used analogWrite()
+    currentMillis = millis();
+    if (currentMillis - previousMillis >= millisInterval) {
+      // moved to own funciton for clarity
+      pwmFadePattern();
+   
+      // setup clock for next tick
+      previousMillis = currentMillis;
+    }
+  }
+   
+  // Code from james@baldengineer.com adapted as a component here.
+  // email | twitter | www
+  // See more at: https://www.baldengineer.com/software-pwm-with-millis.html
+
+};
+ 
+Fader eyes(eyesPin, 5, 30);
+//Fader mouth(mouthPin, 5, 30);
+//Fader leftCap(leftCapPin, 5, 30);
+
+//Fader rightCap(rightCapPin, 5, 30);
+//Fader topCap(topCapPin, 5, 30);
+
+
+//Flasher eyes(eyesPin, 1000, 500);
 Flasher mouth(mouthPin, 1000, 1000);
 Flasher leftCap(leftCapPin, 30, 1000);
 Flasher rightCap(rightCapPin, 30, 2000);
 Flasher topCap(topCapPin, 30, 500);
+
+byte pins[8] = {2,3,5,6,9,10,11,12};
+
+SoftPWM softPwm(pins);
+
+//Fader rightCap(rightCapPin, 5, 500);
+//Fader topCap(topCapPin, 5, 500);
 
 void setup() 
 { 
