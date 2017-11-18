@@ -154,18 +154,19 @@ class Animation
   unsigned long previousMillis = 0; // last update of position
 
   unsigned long eyesOn = 0; // last update of position
-  unsigned long mouthOn = 5000; // last update of position
-  unsigned long leftCapOn = 10000; // last update of position
-  unsigned long rightCapOn = 10000; // last update of position
-  unsigned long topCapOn = 10000; // last update of position
-  unsigned long rightCollarOn = 10000; // last update of position
-  unsigned long leftCollarOn = 10000; // last update of position
-  unsigned long eyesFlashOn = 15000; // last update of position
-  unsigned long allOffMillis = 25000; // last update of position
+  unsigned long mouthOn = 10000; // last update of position
+  unsigned long leftCapOn = 20000; // last update of position
+  unsigned long rightCapOn = 20000; // last update of position
+  unsigned long topCapOn = 20000; // last update of position
+  unsigned long rightCollarOn = 20000; // last update of position
+  unsigned long leftCollarOn = 20000; // last update of position
+  unsigned long eyesFlashOn = 30000; // last update of position
+  unsigned long allOffMillis = 35000; // last update of position
   
-  unsigned long totalAnimationMillis = 30000; // last update of position
+  unsigned long totalAnimationMillis = 45000; // last update of position
 
   bool allOff = false;
+  bool eyesFlashOnly = true;
  
   public:
   Animation()
@@ -218,7 +219,7 @@ class Animation
           leftCollar.Update();
     }   
 
-    if(currentMillis - previousMillis >= eyesFlashOn)
+    if(currentMillis - previousMillis >= eyesFlashOn && eyesFlashOnly)
     {
           //eyes.turnOff();
           mouth.turnOff();
@@ -236,6 +237,8 @@ class Animation
 
     if(currentMillis - previousMillis >= allOffMillis)
     {
+          eyesFlashOnly = false;
+          
           eyes.turnOff();
           mouth.turnOff();
           leftCap.turnOff();
@@ -251,6 +254,7 @@ class Animation
     {
           previousMillis = millis();
           allOff = false;
+          eyesFlashOnly = true;
     }
   }
   
