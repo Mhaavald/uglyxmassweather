@@ -138,136 +138,14 @@ class Fader
 
 
   Fader   eyes(eyesPin, 5, 30);
-
-  Flasher eyesFlash(eyesPin, 30, 500);
-  
   Flasher mouth(mouthPin, 5000, 1000);
   Flasher leftCap(leftCapPin, 30, 1000);
   Flasher rightCap(rightCapPin, 30, 2000);
   Flasher topCap(topCapPin, 30, 500);
-  Flasher rightCollar(rightCollarPin, 30, 1000);
-  //Fader   rightCollar(rightCollarPin, 5, 30);
+  Flasher rightCollar(rightCollarPin, 30, 1000);  
   Flasher leftCollar(leftCollarPin, 30, 3000);
   
-class Animation
-{
-  unsigned long previousMillis = 0; // last update of position
 
-  unsigned long eyesOn = 0; // last update of position
-  unsigned long mouthOn = 5000; // last update of position
-  unsigned long leftCapOn = 10000; // last update of position
-  unsigned long rightCapOn = 10000; // last update of position
-  unsigned long topCapOn = 10000; // last update of position
-  unsigned long rightCollarOn = 10000; // last update of position
-  unsigned long leftCollarOn = 10000; // last update of position
-  unsigned long eyesFlashOn = 15000; // last update of position
-  unsigned long allOffMillis = 25000; // last update of position
-  
-  unsigned long totalAnimationMillis = 30000; // last update of position
-
-  bool allOff = false;
-  bool onlyEyes = true;
- 
-  public:
-  Animation()
-  {
-      
-  }
-
-  void turnOff()
-  {
-    
-  }
-  
-  void Update()
-  {
-    unsigned long currentMillis = millis();
-    
-    if(currentMillis - previousMillis >= eyesOn && !allOff)
-    {
-      eyes.Update();
-    }
-
-    if(currentMillis - previousMillis >= mouthOn && !allOff)
-    {
-        mouth.Update();
-    }
-
-    if(currentMillis - previousMillis >= leftCapOn && !allOff)
-    {
-        leftCap.Update();
-    }
-
-    if(currentMillis - previousMillis >= rightCapOn && !allOff)
-    {
-        rightCap.Update();
-    }
-
-    if(currentMillis - previousMillis >= topCapOn && !allOff)
-    {
-        topCap.Update();
-    }
-
-
-    if(currentMillis - previousMillis >= rightCollarOn && !allOff)
-    {
-          rightCollar.Update();
-    }
-  
-    if(currentMillis - previousMillis >= leftCollarOn && !allOff)
-    {
-          leftCollar.Update();
-    }   
-
-    if(currentMillis - previousMillis >= eyesFlashOn && onlyEyes)
-    {
-          //eyes.turnOff();
-          mouth.turnOff();
-          leftCap.turnOff();
-          rightCap.turnOff();
-          topCap.turnOff();
-          rightCollar.turnOff();
-          leftCollar.turnOff();
-
-          allOff = true;
-          
-          eyesFlash.Update();
-
-
-    }   
-
-    if(currentMillis - previousMillis >= allOffMillis)
-    {
-          eyes.turnOff();
-          mouth.turnOff();
-          leftCap.turnOff();
-          rightCap.turnOff();
-          topCap.turnOff();
-          rightCollar.turnOff();
-          leftCollar.turnOff();
-          eyesFlash.turnOff();
-
-          
-          onlyEyes = false;
-          
-    }   
-
-
-    if(currentMillis - previousMillis >= totalAnimationMillis)
-    {
-          previousMillis = millis();
-          allOff = false;
-          onlyEyes = true;
-    }
-  }
-  
-};
-
-// Eyes will fade on off
-// The others will blink/flash
- 
-
-Animation myAnimation;
 
 void setup() 
 { 
@@ -277,6 +155,11 @@ void setup()
  
 void loop() 
 { 
-  myAnimation.Update();
-  
+  eyes.Update();
+  mouth.Update();
+  leftCap.Update();
+  rightCap.Update();
+  topCap.Update();
+  rightCollar.Update();
+  leftCollar.Update();
 }
