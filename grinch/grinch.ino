@@ -16,6 +16,7 @@
   E.g. adding a button is simple and button down will be detected immediately since no other
   components owns the thread in a delay.
   Of course if a coponent has lot's of work to do then it may affect how e.g. Fader works.
+comment
   
 */
 
